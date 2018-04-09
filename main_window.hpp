@@ -16,12 +16,14 @@ private:
 	sf::RenderWindow window;
 
 	gui start_menu;
+	gui info_menu;
 
 	lake lake;
 	
 	bool sandbox;
 	bool menu;
 	bool evolution;
+	bool info;
 
 	void createMenu();
 	void createLake();

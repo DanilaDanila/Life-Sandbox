@@ -86,6 +86,9 @@ void fish::writeToRegisters(vec2 nearest_food, vec2 nearest_herbivore, vec2 near
 
 void fish::update(float time)
 {
+	while(rotation>pi) rotation=-2*pi+rotation;
+	while(rotation<-pi) rotation=2*pi+rotation;
+
 	head.setPosition(position);
 	body.setPosition(position);
 

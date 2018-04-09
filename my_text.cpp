@@ -1,5 +1,6 @@
 #include "my_text.hpp"
 #include <GLUT/GLUT.h>
+#include <iostream>
 
 void drawSquare(int size, int x, int y)
 {
@@ -94,6 +95,13 @@ my_text::my_text()
 	font.insert(std::pair<char, letter>('!', letter()));
 	font['!']=letter(0,1,0,
 					 0,1,0,
+					 0,1,0,
+					 0,0,0,
+					 0,1,0);
+
+	font.insert(std::pair<char, letter>('?', letter()));
+	font['?']=letter(1,1,1,
+					 0,0,1,
 					 0,1,0,
 					 0,0,0,
 					 0,1,0);
@@ -334,20 +342,66 @@ void my_text::setString(std::string str) { s=str; }
 void my_text::draw()
 {
 	glColor3f(r, g, b);
+	int slash=0;
+	bool use_slash=true;
 	for(int i=0;i<s.length();i++)
+	{
+		if(s[i]=='%')
+		{
+			std::string str=s.substr(i+1,15);
+			bool a0=std::stoi(str.substr(0,1));
+			bool a1=std::stoi(str.substr(1,1));
+			bool a2=std::stoi(str.substr(2,1));
+			bool a3=std::stoi(str.substr(3,1));
+			bool a4=std::stoi(str.substr(4,1));
+			bool a5=std::stoi(str.substr(5,1));
+			bool a6=std::stoi(str.substr(6,1));
+			bool a7=std::stoi(str.substr(7,1));
+			bool a8=std::stoi(str.substr(8,1));
+			bool a9=std::stoi(str.substr(9,1));
+			bool a10=std::stoi(str.substr(10,1));
+			bool a11=std::stoi(str.substr(11,1));
+			bool a12=std::stoi(str.substr(12,1));
+			bool a13=std::stoi(str.substr(13,1));
+			bool a14=std::stoi(str.substr(14,1));
+			letter l(a0,a1,a2,a3,a4,a5,a6,a7,a8,a9,a10,a11,a12,a13,a14);
+
+			glPushMatrix();
+			glTranslatef(x+slash*3*size+size, y, 0.0);
+			drawLetter(&l);
+			glPopMatrix();
+
+			use_slash=false;
+			i+=15;
+		}
+		else
 		if(font.find(s[i])!=font.end())
 		{
 			glPushMatrix();
-			glTranslatef(x+i*3*size+i*size, y, 0.0);
+			glTranslatef(x+slash*3*size+slash*size, y, 0.0);
 			drawLetter(&font[s[i]]);
 			glPopMatrix();
+
+			use_slash=true;
 		}
+		slash++;
+	}
 }
 
 vec2 my_text::getRectSize()
 {
+	std::string str=s;
+
 	vec2 rect_size;
-	rect_size.x=s.length()*3*size+s.length()*size;
+
+	int shift=0;
+	while(str.find('%')!=std::string::npos)
+	{
+		str.erase(str.begin()+str.find('%'), str.begin()+str.find('%')+16);
+		shift++;
+	}
+
+	rect_size.x=(str.length()+shift)*3*size+str.length()*size+((shift!=0)?1:0);
 	rect_size.y=5*size;
 
 	return rect_size;

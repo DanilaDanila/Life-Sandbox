@@ -15,7 +15,7 @@ float *lake::createRandomProgram()
 	prog[0]=rand()%2;
 	for(int i=1;i<PROGRAM_LEN;i++)
 		prog[i]=rand()%PROGRAM_LEN;
-	prog[12]=rand()%100-50;
+	prog[12]=rand()%20-10;
 	prog[13]=2.0;
 	return prog;
 }
@@ -125,6 +125,7 @@ void lake::createChildFish(float *prog, vec2 pos)
 	copyProgram(prog, new_program);
 
 	if(rand()%5==0) mutateProgram(new_program);
+	if(rand()%15==0) new_program[12]=rand()%20-10;
 
 	fishes.push_back(fish());
 	fishes[fishes.size()-1].setProgram(new_program);
@@ -140,6 +141,7 @@ void lake::DivineIntervention(float *prog)
 	copyProgram(prog,new_program);
 	for(int i=0;i<divine_intervention_count;i++)
 	{
+		if(rand()%3==0) mutateProgram(new_program);
 		new_program[0]=rand()%2;
 		createFish(new_program);
 	}
@@ -253,7 +255,7 @@ void lake::update(float time)
 	if(evolve)
 	{
 		for(int i=0;i<fishes.size();i++)
-		if(fishes[i].isTimer() && (fishes.size()<max_fishes_count))
+		if(fishes[i].isTimer() && (fishes[i].health>17) && (fishes.size()<max_fishes_count))
 		{
 			createChildFish(fishes[i].getProgram(), fishes[i].getPosition());
 			fishes[i].restartTimer();
